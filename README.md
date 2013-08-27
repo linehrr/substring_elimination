@@ -7,6 +7,7 @@ input with two strings: X and Y
 output the minimun number of charcters taken from X to make Y not the substring of X
 
 example:
+
 X = 123     Y = 12
 min: 1
 
