@@ -1,12 +1,14 @@
 use strict;
 use warnings;
 
-my $x = $ARGV[0];
-my $y = $ARGV[1];
+my $counter = <STDIN>;
 
-my $offset = 0;
-my $last_offset;
-my $count = 0;
+our ($x, $y);
+
+for (1 .. $counter -1 ){
+	($x, $y) = split /\s/, <STDIN>;
+	run ($x, $y);
+}
 
 sub getYtype {
 	my $y = shift;
@@ -40,43 +42,50 @@ sub find_min {
 	return [($left >= $right) ? $right : $left, ($left >= $right)];
 }
 
-my $type = getYtype($y);
-print "type: $type\n";
 
-while (1) {
-	print "index: " . (index $x, $y, $offset) . "\n";
-	if ((index $x, $y, $offset) < 0){
-		last;
-	}else{
-		$offset = index $x, $y, $offset;
+sub run {
+	my $offset = 0;
+	my $last_offset;
+	my $count = 0;
 
-		if ($type > 2){
-			$count++;
-			print "count++\n";
-			if (defined $last_offset and $offset - $last_offset < length $y and $offset != 0){
-				$count--;
-				$last_offset = $offset;
-				$offset += (length $y) - 1;
-				print "conut--\n";
-			}else{
-				$last_offset = $offset;
-			}
-		$offset++;
+	my $type = getYtype($y);
+#	print "type: $type\n";
+
+	while (1) {
+#		print "index: " . (index $x, $y, $offset) . "\n";
+		if ((index $x, $y, $offset) < 0){
+			last;
 		}else{
-			my ($min, $direction) = @{find_min($offset, (substr $y, 0, 1), (substr $y, -1, 1))};
-			print "sub_min: $min\n";
-			print "direction: $direction\n";
-			$count += $min;
-			if ($direction) {
-				$offset += $min;
-			}else{
+			$offset = index $x, $y, $offset;
+
+			if ($type > 2){
+				$count++;
+#				print "count++\n";
+				if (defined $last_offset and $offset - $last_offset < length $y and $offset != 0){
+					$count--;
+					$last_offset = $offset;
+					$offset += (length $y) - 1;
+#					print "conut--\n";
+				}else{
+					$last_offset = $offset;
+				}
 				$offset++;
+			}else{
+				my ($min, $direction) = @{find_min($offset, (substr $y, 0, 1), (substr $y, -1, 1))};
+#				print "sub_min: $min\n";
+#				print "direction: $direction\n";
+				$count += $min;
+				if ($direction) {
+					$offset += $min;
+				}else{
+					$offset++;
+				}
 			}
+
+#			print "offset: $offset\n";
 		}
-
-		print "offset: $offset\n";
 	}
+
+	print "$count\n";
+
 }
-
-print "min: $count\n";
-
