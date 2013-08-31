@@ -5,7 +5,7 @@ my $counter = <STDIN>;
 
 our ($x, $y);
 
-for (1 .. $counter -1 ){
+for (1 .. $counter){
 	($x, $y) = split /\s/, <STDIN>;
 	run ($x, $y);
 }
@@ -42,6 +42,17 @@ sub find_min {
 	return [($left >= $right) ? $right : $left, ($left >= $right)];
 }
 
+sub find_dup {
+	my $offset = shift;
+	my $indice = shift;
+
+	my $counter = 0;
+	while ((substr $x, ($offset + $counter), 1) eq $indice){
+		$counter++;
+	}
+
+	return $counter;
+}
 
 sub run {
 	my $offset = 0;
@@ -49,10 +60,10 @@ sub run {
 	my $count = 0;
 
 	my $type = getYtype($y);
-#	print "type: $type\n";
+	print "type: $type\n";
 
 	while (1) {
-#		print "index: " . (index $x, $y, $offset) . "\n";
+		print "index: " . (index $x, $y, $offset) . "\n";
 		if ((index $x, $y, $offset) < 0){
 			last;
 		}else{
@@ -60,29 +71,34 @@ sub run {
 
 			if ($type > 2){
 				$count++;
-#				print "count++\n";
+				print "count++\n";
 				if (defined $last_offset and $offset - $last_offset < length $y and $offset != 0){
 					$count--;
 					$last_offset = $offset;
 					$offset += (length $y) - 1;
-#					print "conut--\n";
+					print "conut--\n";
 				}else{
 					$last_offset = $offset;
 				}
 				$offset++;
-			}else{
+			}elsif ($type == 2){
 				my ($min, $direction) = @{find_min($offset, (substr $y, 0, 1), (substr $y, -1, 1))};
-#				print "sub_min: $min\n";
-#				print "direction: $direction\n";
+				print "sub_min: $min\n";
+				print "direction: $direction\n";
 				$count += $min;
 				if ($direction) {
 					$offset += $min;
 				}else{
 					$offset++;
 				}
+			}elsif ($type == 1){
+				my $dup_length = find_dup($offset, (substr $y, 0, 1));
+				print "dup_length: $dup_length\n";
+				$count += $dup_length - (length $y) + 1;
+				$offset += $dup_length;
 			}
 
-#			print "offset: $offset\n";
+			print "offset: $offset\n";
 		}
 	}
 
