@@ -19,6 +19,8 @@ sub getYtype {
 
 		if (keys %$char_list > 2){
 			return keys %$char_list;
+		}elsif (($i + 1) < (length $y) and (index $y, $char, $i + 1) != ($i + 1) and keys %$char_list > 1){
+			return 3;
 		}
 	}
 	return keys %$char_list;
