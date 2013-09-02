@@ -1,11 +1,10 @@
-#!/usr/bin/python
-
 counter = int(raw_input())
 
 global x,y
+global char_list
+char_list = {}
 
 def getYtype(y):
-	char_list = {}
 	for i in range(len(y)):
 		char = y[i]
 		char_list[char] = 1
@@ -38,7 +37,23 @@ def find_dup(offset, indice):
 		counter += 1
 	return counter
 
+def recursion_find(sub_x):
+	location = sub_x.find(y)
+	if location < 0:
+		return 0 
 
+	try1 = 1 + recursion_find(sub_x[0:location] + sub_x[(location + 1):]) 
+		
+	if (location + len(y) >= len(sub_x)):
+		return 1
+	if not sub_x[location + len(y)] in char_list.keys():
+		return 1
+	try2 = 1 + recursion_find(sub_x[0:(location + len(y))] + (sub_x[(location + len(y) + 1):]))
+
+	if (try1 >= try2):
+		return try2
+	else:
+		return try1
 
 def run():
 	offset = 0
@@ -46,7 +61,6 @@ def run():
 	count = 0
 
 	type = getYtype(y)
-	print type
 
 	while(True):
 
@@ -65,12 +79,8 @@ def run():
 					last_offset = offset
 				offset += 1
 			elif type == 2:
-				min1,direction = find_min(offset,y[0],y[-1])
-				count += min1
-				if (direction):
-					offset += min1
-				else:
-				 	offset += 1
+				count = recursion_find(x)
+				break
 			elif type == 1:
 				dup_length = find_dup(offset, y[0])
 				count += dup_length - len(y) + 1;
@@ -82,5 +92,4 @@ def run():
 for i in range(counter):
 	x,y = raw_input().split()
 	run()
-
 
